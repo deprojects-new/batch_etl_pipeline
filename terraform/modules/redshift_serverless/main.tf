@@ -1,9 +1,3 @@
-variable "namespace_name"         { type = string }
-variable "workgroup_name"         { type = string }
-variable "subnet_ids"             { type = list(string) }
-variable "security_group_ids"     { type = list(string) }
-variable "redshift_copy_role_arn" { type = string }
-
 # Create namespace
 resource "aws_redshiftserverless_namespace" "ns" {
   namespace_name = var.namespace_name
@@ -21,8 +15,3 @@ resource "aws_redshiftserverless_workgroup" "wg" {
   subnet_ids         = var.subnet_ids
   security_group_ids = var.security_group_ids
 }
-
-output "namespace_name" { value = aws_redshiftserverless_namespace.ns.namespace_name }
-output "workgroup_name" { value = aws_redshiftserverless_workgroup.wg.workgroup_name }
-output "endpoint"       { value = aws_redshiftserverless_workgroup.wg.endpoint }
-output "port"           { value = aws_redshiftserverless_workgroup.wg.port }

@@ -1,13 +1,3 @@
-variable "job_name"          { type = string }
-variable "glue_role_arn"     { type = string }
-variable "bucket_name"       { type = string }
-variable "script_local_path" { type = string }
-variable "script_s3_key"     { type = string }
-
-variable "python_version"    { type = string }
-variable "worker_type"       { type = string }
-variable "number_of_workers" { type = number }
-
 # Upload your local Glue script to S3 (ensures infra owns the artifact)
 resource "aws_s3_object" "glue_script" {
   bucket  = var.bucket_name
@@ -37,4 +27,3 @@ resource "aws_glue_job" "job" {
   }
 }
 
-output "job_name" { value = aws_glue_job.job.name }

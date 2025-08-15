@@ -1,7 +1,3 @@
-variable "bucket_base_name" { type = string }
-variable "project"          { type = string }
-variable "env"              { type = string }
-
 resource "random_id" "suffix" {
   byte_length = 3
 }
@@ -52,11 +48,3 @@ resource "aws_s3_object" "scripts_prefix" {
   key    = "scripts/"
   content = ""
 }
-
-output "bucket"                 { value = aws_s3_bucket.this.bucket }
-output "bucket_arn"             { value = aws_s3_bucket.this.arn }
-output "raw_prefix"             { value = aws_s3_object.raw_prefix.key }
-output "curated_prefix"         { value = aws_s3_object.curated_prefix.key }
-output "scripts_prefix"         { value = aws_s3_object.scripts_prefix.key }
-output "raw_prefix_arn"         { value = "${aws_s3_bucket.this.arn}/raw/*" }
-output "scripts_prefix_arn"     { value = "${aws_s3_bucket.this.arn}/scripts/*" }

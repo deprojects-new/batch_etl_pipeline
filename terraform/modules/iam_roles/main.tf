@@ -1,7 +1,3 @@
-variable "bucket_arn"                { type = string }
-variable "bucket_raw_prefix_arn"     { type = string }
-variable "bucket_scripts_prefix_arn" { type = string }
-
 # ---- Glue Role (for Job + Crawler) ----
 data "aws_iam_policy_document" "glue_trust" {
   statement {
@@ -72,6 +68,3 @@ resource "aws_iam_role_policy_attachment" "redshift_s3_attach" {
   role       = aws_iam_role.redshift_copy_role.name
   policy_arn = aws_iam_policy.redshift_s3.arn
 }
-
-output "glue_role_arn"            { value = aws_iam_role.glue_role.arn }
-output "redshift_copy_role_arn"   { value = aws_iam_role.redshift_copy_role.arn }
