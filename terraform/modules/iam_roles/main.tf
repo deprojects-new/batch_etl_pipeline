@@ -2,7 +2,10 @@
 data "aws_iam_policy_document" "glue_trust" {
   statement {
     actions = ["sts:AssumeRole"]
-    principals { type = "Service" identifiers = ["glue.amazonaws.com"] }
+    principals {
+      type        = "Service"
+      identifiers = ["glue.amazonaws.com"]
+    }
   }
 }
 
