@@ -1,7 +1,10 @@
 variable "region"        { type = string }
 variable "project"       { type = string }
 variable "env"           { type = string }
-variable "tags"          { type = map(string) default = {} }
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
 
 # S3 (single bucket with prefixes)
 variable "bucket_base_name" {
