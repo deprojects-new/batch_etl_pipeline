@@ -46,7 +46,10 @@ resource "aws_iam_role_policy_attachment" "glue_s3_attach" {
 data "aws_iam_policy_document" "redshift_trust" {
   statement {
     actions = ["sts:AssumeRole"]
-    principals { type = "Service" identifiers = ["redshift.amazonaws.com"] }
+    principals {
+      type        = "Service"
+      identifiers = ["redshift.amazonaws.com"]
+    }
   }
 }
 
