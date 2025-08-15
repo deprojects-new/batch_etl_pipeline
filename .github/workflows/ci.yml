@@ -24,8 +24,11 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Terraform Format
+      - name: Terraform Format (auto-fix)
         run: terraform fmt -check -recursive
+
+      - name: Verify no diff after fmt
+        run: git diff --exit-code
 
       - name: Terraform Init
         run: terraform init
