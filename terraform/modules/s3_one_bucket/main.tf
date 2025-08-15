@@ -32,19 +32,19 @@ resource "aws_s3_bucket_public_access_block" "pab" {
 
 # Create logical "folders"
 resource "aws_s3_object" "raw_prefix" {
-  bucket = aws_s3_bucket.this.id
-  key    = "raw/"
+  bucket  = aws_s3_bucket.this.id
+  key     = "raw/"
   content = ""
 }
 
 resource "aws_s3_object" "curated_prefix" {
-  bucket = aws_s3_bucket.this.id
-  key    = "curated/"
+  bucket  = aws_s3_bucket.this.id
+  key     = "curated/"
   content = ""
 }
 
 resource "aws_s3_object" "scripts_prefix" {
-  bucket = aws_s3_bucket.this.id
-  key    = "scripts/"
+  bucket  = aws_s3_bucket.this.id
+  key     = "scripts/"
   content = ""
 }

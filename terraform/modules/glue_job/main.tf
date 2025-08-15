@@ -16,13 +16,13 @@ resource "aws_glue_job" "job" {
     script_location = "s3://${var.bucket_name}/${aws_s3_object.glue_script.key}"
   }
 
-  glue_version       = "4.0"
-  worker_type        = var.worker_type
-  number_of_workers  = var.number_of_workers
-  execution_class    = "STANDARD" # or FLEX if you want cheaper/slow
+  glue_version      = "4.0"
+  worker_type       = var.worker_type
+  number_of_workers = var.number_of_workers
+  execution_class   = "STANDARD" # or FLEX if you want cheaper/slow
 
   default_arguments = {
-    "--job-language" = "python"
+    "--job-language"   = "python"
     "--enable-metrics" = "true"
   }
 }

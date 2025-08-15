@@ -1,5 +1,5 @@
 variable "project" { type = string }
-variable "env"     { type = string }
+variable "env" { type = string }
 
 # Alerts
 variable "alert_email" {

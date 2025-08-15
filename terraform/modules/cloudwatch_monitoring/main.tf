@@ -53,19 +53,19 @@ resource "aws_cloudwatch_event_rule" "glue_job_failed" {
   name = "${var.project}-${var.env}-glue-job-failed"
 
   event_pattern = jsonencode({
-    "source": ["aws.glue"],
-    "detail-type": ["Glue Job State Change"],
-    "detail": {
-      "jobName": [var.glue_job_name],
-      "state": ["FAILED"]
+    "source" : ["aws.glue"],
+    "detail-type" : ["Glue Job State Change"],
+    "detail" : {
+      "jobName" : [var.glue_job_name],
+      "state" : ["FAILED"]
     }
   })
 }
 
 resource "aws_cloudwatch_event_target" "glue_job_failed_to_sns" {
-  rule      = aws_cloudwatch_event_rule.glue_job_failed.name
-  arn       = aws_sns_topic.alerts.arn
-  role_arn  = aws_iam_role.events_to_sns_role.arn
+  rule     = aws_cloudwatch_event_rule.glue_job_failed.name
+  arn      = aws_sns_topic.alerts.arn
+  role_arn = aws_iam_role.events_to_sns_role.arn
 }
 
 ############################################

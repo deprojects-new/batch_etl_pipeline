@@ -1,6 +1,6 @@
-variable "region"        { type = string }
-variable "project"       { type = string }
-variable "env"           { type = string }
+variable "region" { type = string }
+variable "project" { type = string }
+variable "env" { type = string }
 variable "tags" {
   type    = map(string)
   default = {}
@@ -13,7 +13,7 @@ variable "bucket_base_name" {
 }
 
 # Glue
-variable "glue_job_name"       { type = string }
+variable "glue_job_name" { type = string }
 variable "glue_python_version" {
   type    = string
   default = "3" # Glue 4.0 uses Python 3

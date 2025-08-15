@@ -4,7 +4,7 @@ variable "bucket_base_name" {
 }
 
 variable "project" { type = string }
-variable "env"     { type = string }
+variable "env" { type = string }
 
 variable "raw_prefix" {
   type        = string
