@@ -18,8 +18,14 @@ variable "glue_python_version" {
   type    = string
   default = "3" # Glue 4.0 uses Python 3
 }
-variable "glue_worker_type"    { type = string  default = "G.1X" }
-variable "glue_number_workers" { type = number  default = 2 }
+variable "glue_worker_type" {
+  type    = string
+  default = "G.1X"
+}
+variable "glue_number_workers" {
+  type    = number
+  default = 2
+}
 variable "glue_script_local_path" {
   description = "Relative path in your repo to the Glue job script (e.g., ../src/glue_scripts/etl_script.py)"
   type        = string
