@@ -14,7 +14,10 @@ variable "bucket_base_name" {
 
 # Glue
 variable "glue_job_name"       { type = string }
-variable "glue_python_version" { type = string  default = "3" }   # Glue 4.0 uses Python 3
+variable "glue_python_version" {
+  type    = string
+  default = "3" # Glue 4.0 uses Python 3
+}
 variable "glue_worker_type"    { type = string  default = "G.1X" }
 variable "glue_number_workers" { type = number  default = 2 }
 variable "glue_script_local_path" {
