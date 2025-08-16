@@ -1,15 +1,24 @@
-region  = "us-east-1"
-project = "batch-etl-sales"
+aws_region = "us-east-1"
+
+# Data Lake Configuration
+data_lake_bucket_name    = "assignment5-data-lake"
+data_lake_versioning     = true
+data_lake_lifecycle_days = 365
+
+# Glue Configuration
+glue_database_name = "batch_etl_db"
+glue_crawler_name  = "batch-etl-crawler"
+glue_job_name      = "batch-etl-job"
+
+# Tags
 env     = "dev"
+project = "batch-etl-pipeline"
 
-bucket_base_name = "batch-etl-sales"
+tags = {
+  Owner       = "Jeeva"
+  Environment = "dev"
+  Project     = "batch-etl-pipeline"
+}
 
-glue_job_name          = "sales_etl_glue_job"
-glue_script_local_path = "../src/glue_scripts/etl_script.py"
-
-redshift_namespace_name = "sales_dev_ns"
-redshift_workgroup_name = "sales_dev_wg"
-
-# Replace with YOUR VPC resources
-vpc_subnet_ids         = ["subnet-052fd72ab80ccb39c", "subnet-0ec6dc94592901c62"]
-vpc_security_group_ids = ["sg-010cdd41fe817a672"]
+# Users
+users = ["Abhinav", "Priya", "Srinidhi"]

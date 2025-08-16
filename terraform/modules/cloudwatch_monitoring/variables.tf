@@ -25,18 +25,3 @@ variable "enable_s3_alarms" {
   description = "Toggle S3 4xx/5xx alarms."
 }
 
-# Redshift Serverless
-variable "redshift_workgroup_name" {
-  type        = string
-  description = "Redshift Serverless workgroup to monitor."
-}
-variable "enable_redshift_alarm" {
-  type        = bool
-  default     = true
-  description = "Toggle Redshift RPUUtilization alarm."
-}
-variable "redshift_rpu_threshold" {
-  type        = number
-  default     = 80
-  description = "Average RPUUtilization threshold percentage."
-}

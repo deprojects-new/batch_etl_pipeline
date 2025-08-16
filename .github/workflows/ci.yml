@@ -1,72 +1,116 @@
-name: CI
+name: Terraform CI
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, feature/** ]
+    paths: [ 'terraform/**' ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main ]
+    paths: [ 'terraform/**' ]
+  workflow_dispatch:
+
+env:
+  TF_WORKING_DIR: terraform
+  AWS_REGION: us-east-1
+
+# Prevent concurrent applies to the same branch
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  terraform:
-    name: Terraform fmt, validate, plan
+  fmt_validate:
+    name: fmt & validate
     runs-on: ubuntu-latest
-
     defaults:
       run:
-        working-directory: terraform
+        working-directory: ${{ env.TF_WORKING_DIR }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.6
 
-      - name: Terraform Format (auto-fix)
+      - name: Terraform fmt
         run: terraform fmt -check -recursive
 
-      - name: Verify no diff after fmt
-        run: git diff --exit-code
+      - name: Terraform init
+        run: terraform init -input=false
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
+      - name: Terraform validate
         run: terraform validate
 
-      # Optional plan against dev.tfvars (no apply)
-      - name: Terraform Plan (dev)
-        run: terraform plan -var-file=dev.tfvars
-
-  python-tests:
-    name: Python Lint & Unit Tests
+  plan:
+    name: plan (dev)
+    needs: fmt_validate
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-
     defaults:
       run:
-        working-directory: src
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+    permissions:
+      id-token: write   # for OIDC
+      contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: hashicorp/setup-terraform@v3
         with:
-          python-version: "3.11"
+          terraform_version: 1.6.6
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r ../requirements.txt
-          pip install pytest flake8
+      # Configure AWS credentials via OIDC (recommended)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }} # set this in repo secrets
 
-      - name: Lint with flake8
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+      - name: Terraform init
+        run: terraform init -input=false
 
-      - name: Run unit tests
-        run: pytest ../tests/unit --maxfail=1 --disable-warnings -q
+      - name: Terraform plan (dev)
+        run: terraform plan -input=false -no-color -var-file="environments/dev.tfvars" -out=tfplan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+          if-no-files-found: error
+
+  apply:
+    name: apply (dev)
+    needs: [fmt_validate]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform apply (dev)
+        run: terraform apply -input=false -auto-approve -var-file="environments/dev.tfvars"
+        

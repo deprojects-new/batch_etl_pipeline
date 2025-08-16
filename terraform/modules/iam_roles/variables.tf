@@ -1,14 +1,22 @@
-variable "bucket_arn" {
-  type        = string
-  description = "ARN of the S3 bucket."
+# modules/iam_roles/variables.tf
+
+variable "project" {
+  type = string
 }
 
-variable "bucket_raw_prefix_arn" {
-  type        = string
-  description = "ARN for raw prefix objects (e.g., arn:aws:s3:::bucket/raw/*)."
+variable "env" {
+  type = string
 }
 
-variable "bucket_scripts_prefix_arn" {
-  type        = string
-  description = "ARN for scripts prefix objects (e.g., arn:aws:s3:::bucket/scripts/*)."
+variable "data_bucket_name" {
+  type = string
+}
+
+variable "data_bucket_arn" {
+  type = string
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
 }

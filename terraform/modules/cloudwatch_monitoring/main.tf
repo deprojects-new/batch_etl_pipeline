@@ -110,25 +110,3 @@ resource "aws_cloudwatch_metric_alarm" "s3_5xx" {
     FilterId   = "EntireBucket"
   }
 }
-
-############################################
-# Redshift Serverless RPUUtilization alarm
-############################################
-resource "aws_cloudwatch_metric_alarm" "redshift_rpu_util" {
-  count               = var.enable_redshift_alarm ? 1 : 0
-  alarm_name          = "${var.project}-${var.env}-redshift-rpu-util"
-  namespace           = "AWS/Redshift-Serverless"
-  metric_name         = "RPUUtilization"
-  statistic           = "Average"
-  period              = 300
-  evaluation_periods  = 2
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = var.redshift_rpu_threshold
-
-  alarm_description = "Redshift Serverless RPUUtilization high for workgroup ${var.redshift_workgroup_name}"
-  alarm_actions     = [aws_sns_topic.alerts.arn]
-
-  dimensions = {
-    Workgroup = var.redshift_workgroup_name
-  }
-}
