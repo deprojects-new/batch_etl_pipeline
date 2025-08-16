@@ -1,2 +1,2 @@
-output "database_name" { value = aws_glue_catalog_database.db.name }
-output "crawler_name" { value = aws_glue_crawler.raw_crawler.name }
+output "names" { value = { for k, j in aws_glue_job.job : k => j.name } }
+output "db_name" { value = aws_glue_catalog_database.this.name }
