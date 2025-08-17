@@ -1,0 +1,118 @@
+name: Terraform Infrastructure - Batch_ETL_pipeline
+
+on:
+  push:
+    branches: [main, 'feature/**']
+    paths: ['terraform/**', 'personal_acc_terraform/**']
+  pull_request:
+    branches: [main]
+    paths: ['terraform/**', 'personal_acc_terraform/**']
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  TERRAFORM_VERSION: '1.5.0'
+  PROJECT_NAME: assignment2-batch-etl
+
+jobs:
+  # Job 1: Plan main's Infrastructure 
+  main-infrastructure-plan:
+    runs-on: ubuntu-latest
+    name: Plan main's Infrastructure
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Configure AWS credentials for main's account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_KEY2_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Terraform Format Check
+        run: terraform fmt -recursive -check
+        working-directory: ./terraform
+      
+      - name: Terraform Init - mains's Account
+        run: terraform init
+        working-directory: ./terraform
+      
+      - name: Terraform Validate - mains's Account
+        run: terraform validate
+        working-directory: ./terraform
+      
+      - name: Terraform Plan - main's Account
+        run: |
+          terraform plan -var-file=dev.tfvars -out=tfplan
+          terraform show -no-color tfplan > plan_output.txt
+        working-directory: ./terraform
+      
+
+
+  # Job 2: Plan Personal Account Infrastructure (IAM Role + Redshift Cluster)
+  personal-infrastructure-plan:
+    runs-on: ubuntu-latest
+    name: Plan Personal Account Infrastructure
+    # environment: personal-account
+    needs: main-infrastructure-plan  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Configure AWS credentials for Personal account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AJ_KEY }}
+          aws-secret-access-key: ${{ secrets.AJ_KEY2 }}
+          aws-region: ${{ env.AJ_REGION }}
+      
+      # Step 1: Plan IAM Role
+      - name: Terraform Format Check - IAM Role
+        run: terraform fmt -recursive -check
+        working-directory: ./personal_acc_terraform/personal-account
+      
+      - name: Terraform Init - IAM Role
+        run: terraform init
+        working-directory: ./personal_acc_terraform/personal-account
+      
+      - name: Terraform Validate - IAM Role
+        run: terraform validate
+        working-directory: ./personal_acc_terraform/personal-account
+      
+      - name: Terraform Plan - IAM Role
+        run: |
+          terraform plan -out=tfplan
+          terraform show -no-color tfplan > plan_output.txt
+        working-directory: ./personal_acc_terraform/personal-account
+      
+      # Step 2: Plan Redshift Cluster
+      - name: Terraform Format Check - Redshift
+        run: terraform fmt -recursive -check
+        working-directory: ./personal_acc_terraform/redshift-personal
+      
+      - name: Terraform Init - Redshift
+        run: terraform init
+        working-directory: ./personal_acc_terraform/redshift-personal
+      
+      - name: Terraform Validate - Redshift
+        run: terraform validate
+        working-directory: ./personal_acc_terraform/redshift-personal
+      
+      - name: Terraform Plan - Redshift
+        run: |
+          terraform plan -var-file=terraform.tfvars -out=tfplan
+          terraform show -no-color tfplan > plan_output.txt
+        working-directory: ./personal_acc_terraform/redshift-personal
+      
+
