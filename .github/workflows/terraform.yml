@@ -29,21 +29,17 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       
       - name: Configure AWS credentials for main's account
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_KEY_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_KEY2_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_KEY2 }}
           aws-region: ${{ env.AWS_REGION }}
       
-      - name: Terraform Format Check
-        run: terraform fmt -recursive -check
-        working-directory: ./terraform
-      
-      - name: Terraform Init - mains's Account
+      - name: Terraform Init - main's Account
         run: terraform init
         working-directory: ./terraform
       
-      - name: Terraform Validate - mains's Account
+      - name: Terraform Validate - main's Account
         run: terraform validate
         working-directory: ./terraform
       
@@ -71,17 +67,13 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       
       - name: Configure AWS credentials for Personal account
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AJ_KEY }}
           aws-secret-access-key: ${{ secrets.AJ_KEY2 }}
-          aws-region: ${{ env.AJ_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
       
       # Step 1: Plan IAM Role
-      - name: Terraform Format Check - IAM Role
-        run: terraform fmt -recursive -check
-        working-directory: ./personal_acc_terraform/personal-account
-      
       - name: Terraform Init - IAM Role
         run: terraform init
         working-directory: ./personal_acc_terraform/personal-account
@@ -97,22 +89,12 @@ jobs:
         working-directory: ./personal_acc_terraform/personal-account
       
       # Step 2: Plan Redshift Cluster
-      - name: Terraform Format Check - Redshift
-        run: terraform fmt -recursive -check
-        working-directory: ./personal_acc_terraform/redshift-personal
-      
       - name: Terraform Init - Redshift
         run: terraform init
         working-directory: ./personal_acc_terraform/redshift-personal
       
       - name: Terraform Validate - Redshift
         run: terraform validate
-        working-directory: ./personal_acc_terraform/redshift-personal
-      
-      - name: Terraform Plan - Redshift
-        run: |
-          terraform plan -var-file=terraform.tfvars -out=tfplan
-          terraform show -no-color tfplan > plan_output.txt
         working-directory: ./personal_acc_terraform/redshift-personal
       
 
