@@ -157,6 +157,7 @@ module "glue" {
         
       }
     }
+    
     "silver_to_gold" = {
       glue_version      = "4.0"
       worker_type       = "G.1X"

@@ -1,9 +1,10 @@
 import sys
+
+from awsglue.context import GlueContext
+from awsglue.job import Job
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-from awsglue.context import GlueContext
-from awsglue.job import Job
 
 # Get parameters
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "raw_path", "processed_path"])
@@ -21,11 +22,7 @@ raw_df = spark.read.json(args["raw_path"])
 cleaned_df = raw_df.dropna().dropDuplicates()
 
 # Write to silver zone (Parquet format)
-(
-    cleaned_df.write.mode("overwrite")
-    .format("parquet")
-    .save(args["processed_path"])
-)
+(cleaned_df.write.mode("overwrite").format("parquet").save(args["processed_path"]))
 
 print("✅ Bronze → Silver ETL complete")
 
