@@ -1,8 +1,11 @@
+# Glue Catalog Database
 resource "aws_glue_catalog_database" "this" {
   name = var.catalog_db_name
   
+  tags = var.tags
 }
 
+# Glue Crawler
 resource "aws_glue_crawler" "this" {
   count         = var.enable_crawler ? 1 : 0
   name          = var.crawler_name
@@ -11,9 +14,15 @@ resource "aws_glue_crawler" "this" {
 
   dynamic "s3_target" {
     for_each = var.crawler_s3_targets
-    content { path = s3_target.value }
+    content {
+      path = s3_target.value
+    }
   }
+
+  tags = var.tags
 }
+
+# Glue ETL Jobs
 resource "aws_glue_job" "job" {
   for_each = var.glue_jobs
 
@@ -39,19 +48,18 @@ resource "aws_glue_job" "job" {
       "--enable-metrics"                   = "true"
       "--enable-continuous-cloudwatch-log" = "true"
       "--job-language"                     = "python"
+      "--additional-python-modules"        = "delta-spark==2.4.0"
+      "--conf"                             = "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
     },
     each.value.default_args
   )
-}
-module "catalog" {
-  source = "./modules/glue_catalog"
-  
-  # other variables
-  tags = local.tags
+
+  tags = merge(var.tags, {
+    JobName = each.key
+  })
 }
 
-  crawler_name    = var.crawler_name
-  crawler_s3_targets = var.crawler_s3_targets
-  glue_jobs       = var.glue_jobs
+
+
 
 

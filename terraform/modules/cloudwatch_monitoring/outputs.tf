@@ -12,7 +12,3 @@ output "s3_alarm_names" {
     try(aws_cloudwatch_metric_alarm.s3_5xx[0].alarm_name, null),
   ])
 }
-
-output "redshift_alarm_name" {
-  value = try(aws_cloudwatch_metric_alarm.redshift_rpu_util[0].alarm_name, null)
-}
