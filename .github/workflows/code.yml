@@ -1,0 +1,55 @@
+name: ETL Transformations
+
+on:
+  push:
+    branches: [main, 'feature/**']
+    paths:
+      - 'src/glue_scripts/**'
+      - 'src/tests/**'  # added this to include any test files
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/glue_scripts/**'
+      - 'src/tests/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-2
+  PYTHON_VERSION: '3.9'
+
+jobs:
+  run-tests:
+    name: Code Quality & Unit Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r src/requirements.txt
+          pip install black isort pytest pytest-cov boto3 moto
+
+      - name: Check Code Formatting
+        run: |
+          pip install black isort
+          echo "Checking code formatting"
+          
+          # Check Glue scripts
+          echo "Checking Glue scripts formatting..."
+          black src/glue_scripts/ --line-length=88 --check
+          isort src/glue_scripts/ --profile=black --check
+          
+          # Check test files
+          echo "Checking test files formatting..."
+          black src/tests/ --line-length=88 --check
+          isort src/tests/ --profile=black --check
+
+          echo "All code formatting checks passed"
