@@ -1,0 +1,89 @@
+
+x-airflow-env: &airflow_env
+  AIRFLOW__CORE__EXECUTOR: LocalExecutor
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+  AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: "8"         
+  AIRFLOW__CORE__PARALLELISM: "8"
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: "1"
+  AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "True"
+  _PIP_ADDITIONAL_REQUIREMENTS: "apache-airflow-providers-amazon boto3"
+
+
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+
+
+  airflow-init:
+    image: apache/airflow:2.10.5-python3.11
+    env_file: .env
+    environment:
+      <<: *airflow_env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+    entrypoint: /bin/bash
+    command: ["airflow db migrate"]
+    restart: "no"
+
+  airflow-webserver:
+    image: apache/airflow:2.10.5-python3.11
+    env_file: .env
+    environment:
+      <<: *airflow_env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data             
+      - ~/.aws:/home/airflow/.aws:ro
+    command: webserver
+    restart: unless-stopped
+
+  airflow-scheduler:
+    image: apache/airflow:2.10.5-python3.11
+    env_file: .env
+    environment:
+      <<: *airflow_env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-webserver:
+        condition: service_started
+    user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+      - ~/.aws:/home/airflow/.aws:ro          
+    command: scheduler
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,25 +1,45 @@
-variable "region" {
+variable "aws_region" {
+  description = "AWS region for resources"
   type        = string
-  description = "AWS region to deploy resources"
+  default     = "us-east-1"
+}
+
+variable "data_lake_bucket_name" {
+  description = "Name of the data lake S3 bucket"
+  type        = string
+  default     = "assignment2-data-lake"
 }
 
 variable "env" {
+  description = "Environment name"
   type        = string
-  description = "Environment (e.g., dev, prod)"
+  default     = "dev"
 }
 
 variable "project" {
+  description = "Project name"
   type        = string
-  description = "Project name tag"
+  default     = "assignment2"
+}
+
+variable "users" {
+  description = "List of users"
+  type        = list(string)
+  default     = ["Abhinav", "Priya", "Srinidhi"]
 }
 
 variable "tags" {
+  description = "Tags to apply to resources"
   type        = map(string)
-  description = "Additional tags"
-  default     = {}
+  default = {
+    Owner       = "Jeevan"
+    Environment = "dev"
+    Project     = "assignment2"
+  }
 }
 
-<<<<<<< Updated upstream
+feature/Jeevan
+Updated upstream
 variable "data_bucket_name" {
   type        = string
   description = "Name of the main S3 bucket"
@@ -47,20 +67,12 @@ variable "processed_prefix" {
 
 
 
->>>>>>> Stashed changes
+Stashed changes
+main
 
-variable "glue_jobs" {
-  type = map(object({
-    script_s3_path     = string
-    glue_version       = string
-    worker_type        = string
-    number_of_workers  = number
-    max_retries        = number
-    timeout_minutes    = number
-    default_args       = map(string)
-    execution_class    = optional(string)
-    connections        = optional(list(string), [])
-    description        = optional(string)
-  }))
-  description = "Map of Glue jobs to create"
-}
+
+
+
+
+
+

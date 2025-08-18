@@ -1,6 +1,7 @@
-<<<<<<< Updated upstream
+feature/Jeevan
+Updated upstream
 #output "endpoint" { value = aws_redshift_cluster.this.endpoint }
-=======
+main
 
 
 output "cluster_id" {
@@ -77,10 +78,13 @@ output "parameter_group_id" {
   description = "The ID of the parameter group"
   value       = aws_redshift_parameter_group.this.id
 }
+feature/Jeevan
 
 output "effective_iam_roles" {
   description = "ARNs attached to the Redshift cluster"
   value       = aws_redshift_cluster.this.iam_roles
 }
 
->>>>>>> Stashed changes
+Stashed changes
+
+main
