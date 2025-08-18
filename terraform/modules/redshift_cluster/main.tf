@@ -135,6 +135,27 @@ resource "aws_redshift_parameter_group" "this" {
 
 # Redshift Cluster
 resource "aws_redshift_cluster" "this" {
+feature/Jeevan
+ Updated upstream
+  cluster_identifier                  = var.cluster_identifier
+  database_name                       = var.db_name
+  master_username                     = var.master_username
+  master_password                     = var.master_password
+  node_type                           = var.node_type
+  number_of_nodes                     = var.number_of_nodes
+  port                                = var.port
+  cluster_subnet_group_name           = aws_redshift_subnet_group.this.name
+  publicly_accessible                 = var.publicly_accessible
+  iam_roles                           = [var.redshift_role_arn]
+  encrypted                           = true
+  kms_key_id                          = var.kms_key_id != null ? var.kms_key_id : null
+  vpc_security_group_ids              = [aws_security_group.redshift.id]
+  cluster_parameter_group_name        = aws_redshift_parameter_group.this.name
+  skip_final_snapshot                 = true
+
+  tags = var.tags
+
+ main
   cluster_identifier        = var.cluster_identifier
   database_name            = var.database_name
   master_username          = var.master_username
@@ -148,7 +169,11 @@ resource "aws_redshift_cluster" "this" {
   cluster_subnet_group_name = aws_redshift_subnet_group.this.name
   
   # IAM role for S3 access
+ feature/Jeevan
+  iam_roles = compact([var.copy_role_arn, aws_iam_role.redshift_s3.arn])
+
   iam_roles = [aws_iam_role.redshift_s3.arn]
+ main
   
   # Parameter group
   cluster_parameter_group_name = aws_redshift_parameter_group.this.name
@@ -165,4 +190,11 @@ resource "aws_redshift_cluster" "this" {
   tags = merge(var.tags, {
     Name = var.cluster_identifier
   })
+feature/Jeevan
+Stashed changes
 }
+
+output "endpoint" { value = aws_redshift_cluster.this.endpoint }
+
+}
+main

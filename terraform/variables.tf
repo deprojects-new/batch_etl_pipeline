@@ -38,10 +38,51 @@ variable "tags" {
   }
 }
 
+<<<<<<< Updated upstream
+feature/Jeevan
+Updated upstream
+variable "data_bucket_name" {
+  type        = string
+  description = "Name of the main S3 bucket"
+}
+=======
+# ... keep your existing variables ...
+
+# S3 bucket NAME (not ARN) that holds the processed data your COPY reads from
+variable "processed_bucket" {
+  description = "S3 bucket name for processed data (no ARN)"
+  type        = string
+}
+
+# Prefix under that bucket (no leading slash, no trailing slash)
+# e.g., "processed/sales" or "gold/sales"
+variable "processed_prefix" {
+  description = "S3 prefix under the bucket to load from (no leading slash)"
+  type        = string
+  validation {
+    condition     = !(can(regex("^/", var.processed_prefix)))
+    error_message = "processed_prefix must not start with '/'. Use 'processed/sales', not '/processed/sales'."
+  }
+}
 
 
 
 
+Stashed changes
+main
+=======
+variable "processed_bucket" {
+  type        = string
+  description = "S3 bucket name (no ARN) with gold data"
+}
+>>>>>>> Stashed changes
 
+variable "processed_prefix" {
+  type        = string
+  description = "Prefix under bucket, e.g., 'gold' or 'gold/SalesWide'"
+}
 
-
+variable "cluster_identifier" {
+  type        = string
+  description = "Existing Redshift cluster identifier"
+}

@@ -14,6 +14,11 @@ resource "aws_s3_bucket_public_access_block" "this" {
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
   versioning_configuration { status = "Enabled" }
+feature/Jeevan
+Updated upstream
+}
+
+main
 }
 
 # S3 bucket policy to allow cross-account access from personal Redshift
@@ -70,4 +75,10 @@ resource "aws_s3_object" "scripts_folder" {
   bucket = aws_s3_bucket.this.id
   key    = "scripts/"
   source = "/dev/null" # Empty file to create folder
+feature/Jeevan
 }
+
+Stashed changes
+
+}
+main
