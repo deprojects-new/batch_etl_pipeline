@@ -1,17 +1,10 @@
 import sys
-<<<<<<< Updated upstream
-
-=======
 import boto3
 import datetime
->>>>>>> Stashed changes
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-<<<<<<< Updated upstream
-
-=======
 from pyspark.sql.functions import col, monotonically_increasing_id, year, month, dayofmonth, dayofweek
 
 # -----------------------------
@@ -30,22 +23,10 @@ def filename_to_epoch(key: str) -> int:
 # -----------------------------
 # Arguments
 # -----------------------------
->>>>>>> Stashed changes
 args = getResolvedOptions(
     sys.argv,
     [
         "JOB_NAME",
-<<<<<<< Updated upstream
-        "silver_path",
-        "gold_path",
-        "redshift_jdbc_url",
-        "redshift_user",
-        "redshift_pass",
-        "redshift_table",
-    ],
-)
-
-=======
         "silver_s3_path",
         "gold_s3_path",
         "silver_database",
@@ -56,35 +37,12 @@ args = getResolvedOptions(
 # -----------------------------
 # Glue Setup
 # -----------------------------
->>>>>>> Stashed changes
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args["JOB_NAME"], args)
 
-<<<<<<< Updated upstream
-# Read silver zone data
-silver_df = spark.read.parquet(args["silver_path"])
-
-# Example transformation: daily sales aggregation
-from pyspark.sql.functions import col
-from pyspark.sql.functions import sum as _sum
-
-gold_df = silver_df.groupBy("event_type").agg(_sum(col("amount")).alias("total_amount"))
-
-# Write gold data back to S3
-(gold_df.write.mode("append").format("parquet").save(args["gold_path"]))
-
-# Load into Redshift using JDBC
-gold_df.write.format("jdbc").option("url", args["redshift_jdbc_url"]).option(
-    "dbtable", args["redshift_table"]
-).option("user", args["redshift_user"]).option("password", args["redshift_pass"]).mode(
-    "append"
-).save()
-
-print("✅ Silver → Gold ETL + Redshift load complete")
-=======
 # -----------------------------
 # Read from Silver Zone
 # -----------------------------
@@ -200,6 +158,5 @@ if dim_payment is not None:
 fact_sales.write.mode("append").partitionBy(date_col).parquet(f"{args['gold_s3_path']}/FactSales")
 
 print("✅ Silver → Gold ETL complete. Partitioned by sales date:", date_col)
->>>>>>> Stashed changes
 
 job.commit()

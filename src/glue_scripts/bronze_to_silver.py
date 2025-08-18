@@ -1,21 +1,12 @@
 import sys
-<<<<<<< Updated upstream
-
-=======
 import datetime
 import boto3
 import uuid
->>>>>>> Stashed changes
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-<<<<<<< Updated upstream
-
-# Get parameters
-args = getResolvedOptions(sys.argv, ["JOB_NAME", "raw_path", "processed_path"])
-=======
 import subprocess
 
 def filename_to_epoch(key: str) -> int:
@@ -32,7 +23,6 @@ def filename_to_epoch(key: str) -> int:
 # Glue Setup
 # -----------------------------
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "bronze_s3_path", "silver_s3_path","bronze_database","silver_database"])
->>>>>>> Stashed changes
 
 sc = SparkContext()
 glueContext = GlueContext(sc)
@@ -40,18 +30,6 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args["JOB_NAME"], args)
 
-<<<<<<< Updated upstream
-# Read raw data from S3 (JSON format)
-raw_df = spark.read.json(args["raw_path"])
-
-# Basic cleaning (drop nulls, remove duplicates)
-cleaned_df = raw_df.dropna().dropDuplicates()
-
-# Write to silver zone (Parquet format)
-(cleaned_df.write.mode("append").format("parquet").save(args["processed_path"]))
-
-print("✅ Bronze → Silver ETL complete")
-=======
 # -----------------------------
 # Locate latest JSON file
 # -----------------------------
@@ -109,6 +87,5 @@ subprocess.run([
 subprocess.run(["aws", "s3", "rm", "--recursive", tmp_output], check=True)
 
 print("✅ Bronze → Silver ETL complete. File saved at:", final_output)
->>>>>>> Stashed changes
 
 job.commit()
