@@ -42,6 +42,10 @@ module "iam_roles" {
   # DataEngineers user group
   data_engineers_group_name = "DataEngineers"
 
+  # COPY role scope
+  processed_bucket = var.processed_bucket
+  processed_prefix = var.processed_prefix
+
   tags = local.tags
 }
 
@@ -231,6 +235,7 @@ module "cloudwatch_monitoring" {
 
   # Tags for all resources
   tags = local.tags
+<<<<<<< Updated upstream
 feature/Jeevan
 }
 
@@ -239,3 +244,6 @@ Stashed changes
 
 }
 main
+=======
+}
+>>>>>>> Stashed changes

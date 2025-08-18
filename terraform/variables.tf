@@ -38,6 +38,7 @@ variable "tags" {
   }
 }
 
+<<<<<<< Updated upstream
 feature/Jeevan
 Updated upstream
 variable "data_bucket_name" {
@@ -69,10 +70,19 @@ variable "processed_prefix" {
 
 Stashed changes
 main
+=======
+variable "processed_bucket" {
+  type        = string
+  description = "S3 bucket name (no ARN) with gold data"
+}
+>>>>>>> Stashed changes
 
+variable "processed_prefix" {
+  type        = string
+  description = "Prefix under bucket, e.g., 'gold' or 'gold/SalesWide'"
+}
 
-
-
-
-
-
+variable "cluster_identifier" {
+  type        = string
+  description = "Existing Redshift cluster identifier"
+}
