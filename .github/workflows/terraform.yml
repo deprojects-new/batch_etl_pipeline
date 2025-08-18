@@ -28,12 +28,6 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       
-      - name: Configure AWS credentials for main's account
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_KEY2 }}
-          aws-region: ${{ env.AWS_REGION }}
       
       - name: Terraform Init - main's Account
         run: terraform init
@@ -66,12 +60,6 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       
-      - name: Configure AWS credentials for Personal account
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AJ_KEY }}
-          aws-secret-access-key: ${{ secrets.AJ_KEY2 }}
-          aws-region: ${{ env.AWS_REGION }}
       
       # Step 1: Plan IAM Role
       - name: Terraform Init - IAM Role
