@@ -38,7 +38,26 @@ variable "tags" {
   }
 }
 
+variable "redshift_jdbc_url" {
+  description = "JDBC connection URL for Redshift cluster"
+  type        = string
+}
 
+variable "redshift_user" {
+  description = "Redshift database username"
+  type        = string
+}
+
+variable "redshift_pass" {
+  description = "Redshift database password"
+  type        = string
+  sensitive   = true
+}
+
+variable "redshift_table" {
+  description = "Target Redshift table name"
+  type        = string
+}
 
 
 

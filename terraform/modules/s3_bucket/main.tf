@@ -71,3 +71,19 @@ resource "aws_s3_object" "scripts_folder" {
   key    = "scripts/"
   source = "/dev/null" # Empty file to create folder
 }
+
+# Upload bronze_to_silver script
+resource "aws_s3_object" "bronze_to_silver_script" {
+  bucket = aws_s3_bucket.this.id
+  key    = "scripts/bronze_to_silver.py"
+  source = "${path.root}/../src/glue_scripts/bronze_to_silver.py"
+  etag   = filemd5("${path.root}/../src/glue_scripts/bronze_to_silver.py")
+}
+
+# Upload silver_to_gold script
+resource "aws_s3_object" "silver_to_gold_script" {
+  bucket = aws_s3_bucket.this.id
+  key    = "scripts/silver_to_gold.py"
+  source = "${path.root}/../src/glue_scripts/silver_to_gold.py"
+  etag   = filemd5("${path.root}/../src/glue_scripts/silver_to_gold.py")
+}
