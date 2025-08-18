@@ -9,8 +9,9 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = "us-east-1"  # Make sure this matches your AWS resources
 }
+
 
 locals {
   project_name = var.project
@@ -23,10 +24,10 @@ locals {
 # S3 bucket for medallion architecture
 module "s3_bucket" {
   source = "./modules/s3_bucket"
-
-  bucket_name = var.data_lake_bucket_name
-  tags        = local.tags
+  data_lake_bucket_name = "assignment2-data-lake"
 }
+
+
 
 # IAM roles for Glue and Redshift
 module "iam_roles" {

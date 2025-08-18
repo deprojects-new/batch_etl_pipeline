@@ -1,4 +1,4 @@
-aws_region = "us-east-1"
+aws_region = "us-east-2"
 
 # Data Lake Configuration
 data_lake_bucket_name = "assignment2-data-lake"
