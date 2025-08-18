@@ -15,6 +15,7 @@ variable "kms_key_id"          {
     type = string  
 default = null 
 }
+<<<<<<< Updated upstream
 variable "publicly_accessible" { 
     type = bool    
     default = false
@@ -24,3 +25,12 @@ variable "tags"                {
     type = map(string)
      default = {} 
      }
+=======
+
+variable "copy_role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role ARN for Redshift COPY (optional)."
+}
+
+>>>>>>> Stashed changes

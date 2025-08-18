@@ -19,10 +19,35 @@ variable "tags" {
   default     = {}
 }
 
+<<<<<<< Updated upstream
 variable "data_bucket_name" {
   type        = string
   description = "Name of the main S3 bucket"
 }
+=======
+# ... keep your existing variables ...
+
+# S3 bucket NAME (not ARN) that holds the processed data your COPY reads from
+variable "processed_bucket" {
+  description = "S3 bucket name for processed data (no ARN)"
+  type        = string
+}
+
+# Prefix under that bucket (no leading slash, no trailing slash)
+# e.g., "processed/sales" or "gold/sales"
+variable "processed_prefix" {
+  description = "S3 prefix under the bucket to load from (no leading slash)"
+  type        = string
+  validation {
+    condition     = !(can(regex("^/", var.processed_prefix)))
+    error_message = "processed_prefix must not start with '/'. Use 'processed/sales', not '/processed/sales'."
+  }
+}
+
+
+
+
+>>>>>>> Stashed changes
 
 variable "glue_jobs" {
   type = map(object({
