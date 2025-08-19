@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 DEFAULT_ARGS = {
-    "owner": "data-eng",
+    "owner": "abhinav",
     "depends_on_past": False,
     "retries": 2,
     "retry_delay": timedelta(minutes=5),

@@ -1,26 +1,39 @@
-# This .py is to check connectivity if aws creds are working and network is strong
-
-from airflow import DAG
+import sys
 from datetime import datetime
+from airflow import DAG
 from airflow.decorators import task
-from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+# Ensure both /opt/airflow and /opt/airflow/src are importable
+if "/opt/airflow" not in sys.path:
+    sys.path.append("/opt/airflow")
+if "/opt/airflow/src" not in sys.path:
+    sys.path.append("/opt/airflow/src")
+try:
+    from src.ingestion.upload_to_s3 import generate_and_upload_batch
+except Exception:
+    from ingestion.upload_to_s3 import generate_and_upload_batch
 
-BUCKET = "assignment5-data-lake"
-DB = "dev"
+BUCKET = "assignment2-data-lake"
 
 with DAG(
-    dag_id="demo_connectivity",
-    start_date=datetime(2025,1,1),
+    dag_id="demo_generate",
+    start_date=datetime(2025, 1, 1),
     schedule_interval=None,
     catchup=False,
-    tags=["sanity"],
+    tags=["sanity", "generator"],
 ) as dag:
 
     @task
-    def s3_write_read():
-        s3 = S3Hook()
-        key = "sandbox/hello.txt"
-        s3.load_string("hello-from-airflow", key=key, bucket_name=BUCKET, replace=True)
-        assert s3.check_for_key(key, bucket_name=BUCKET)
+    def generate_small_batch(batch_id: str | None = None):
+        
+        result = generate_and_upload_batch(
+            bucket=BUCKET,
+            batch_id=batch_id,          
+            base_prefix="bronze/sales/",
+            target_size_mb=64,          
+            chunk_size_mb=16,           
+            seed=123                    
+        )
+        
+        return result
 
-    s3_write_read()
+    generate_small_batch()
