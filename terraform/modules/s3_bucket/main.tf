@@ -1,7 +1,9 @@
 resource "aws_s3_bucket" "this" {
-  bucket = var.bucket_name
+  bucket = var.data_lake_bucket_name
   tags   = var.tags
 }
+
+
 
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket                  = aws_s3_bucket.this.id
@@ -49,25 +51,25 @@ resource "aws_s3_bucket_policy" "cross_account_access" {
 
 # Create medallion folder structure
 resource "aws_s3_object" "bronze_folder" {
-  bucket = aws_s3_bucket.this.id
-  key    = "bronze/"
-  source = "/dev/null"
+  bucket  = var.data_lake_bucket_name
+  key     = "bronze/"
+  content = ""
 }
 
 resource "aws_s3_object" "silver_folder" {
-  bucket = aws_s3_bucket.this.id
-  key    = "silver/"
-  source = "/dev/null" # Empty file to create folder
+  bucket  = var.data_lake_bucket_name
+  key     = "silver/"
+  content = ""
 }
 
 resource "aws_s3_object" "gold_folder" {
-  bucket = aws_s3_bucket.this.id
-  key    = "gold/"
-  source = "/dev/null" # Empty file to create folder
+  bucket  = var.data_lake_bucket_name
+  key     = "gold/"
+  content = ""
 }
 
 resource "aws_s3_object" "scripts_folder" {
-  bucket = aws_s3_bucket.this.id
-  key    = "scripts/"
-  source = "/dev/null" # Empty file to create folder
+  bucket  = var.data_lake_bucket_name
+  key     = "scripts/"
+  content = ""
 }
